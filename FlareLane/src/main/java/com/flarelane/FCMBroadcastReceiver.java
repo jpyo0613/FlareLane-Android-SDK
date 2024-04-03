@@ -7,6 +7,10 @@ import android.util.Log;
 
 import androidx.legacy.content.WakefulBroadcastReceiver;
 
+import com.flarelane.notification.Notification;
+import com.flarelane.notification.NotificationReceivedEvent;
+import com.flarelane.util.AndroidUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,14 +19,11 @@ import java.util.Set;
 public class FCMBroadcastReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    showNotification(context, intent);
-                } catch (Exception e) {
-                    BaseErrorHandler.handle(e);
-                }
+        new Thread(() -> {
+            try {
+                showNotification(context, intent);
+            } catch (Exception e) {
+                BaseErrorHandler.handle(e);
             }
         }).start();
     }
@@ -44,7 +45,7 @@ public class FCMBroadcastReceiver extends WakefulBroadcastReceiver {
         Notification flarelaneNotification = new Notification(jsonObject);
         com.flarelane.Logger.verbose("Message data payload: " + flarelaneNotification);
 
-        boolean isForeground = Helper.appInForeground(context);
+        boolean isForeground = AndroidUtils.appInForeground(context);
         com.flarelane.Logger.verbose("onMessageReceived isForeground: " + isForeground);
 
         JSONObject data = flarelaneNotification.getDataJsonObject();

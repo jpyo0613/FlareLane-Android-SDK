@@ -30,7 +30,7 @@
         </receiver>
 
         <activity
-            android:name=".NotificationClickedActivity"
+            android:name=".notification.NotificationClickedActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:taskAffinity="flarelane.taskAffinity"

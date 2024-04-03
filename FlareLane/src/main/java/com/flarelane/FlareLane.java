@@ -13,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.flarelane.notification.NotificationClickedHandler;
+import com.flarelane.notification.NotificationForegroundReceivedHandler;
+import com.flarelane.util.AndroidUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -27,9 +30,8 @@ public class FlareLane {
         public static String version = "1.6.0";
     }
 
-    protected static com.flarelane.NotificationForegroundReceivedHandler notificationForegroundReceivedHandler = null;
-    protected static com.flarelane.NotificationClickedHandler notificationClickedHandler = null;
-    protected static int notificationIcon = 0;
+    protected static NotificationForegroundReceivedHandler notificationForegroundReceivedHandler = null;
+    protected static NotificationClickedHandler notificationClickedHandler = null;
     protected static boolean requestPermissionOnLaunch = false;
     private static Handler mainHandler = new Handler(Looper.getMainLooper());
     protected static boolean isActivated = false;
@@ -60,11 +62,6 @@ public class FlareLane {
         }
     }
 
-    // TODO: (Deprecated) FlareLane 클래스 내 코드로 아이콘 변경할 수 없도록 할 예정 (기본 리소스 이름을 인식하게 하거나, Notification 의 변수 값으로 동적 할당 예정)
-    public static void setNotificationIcon(int notificationIcon) {
-        FlareLane.notificationIcon = notificationIcon;
-    }
-
     public static void setLogLevel(int logLevel) {
         try {
             com.flarelane.Logger.logLevel = logLevel;
@@ -73,13 +70,13 @@ public class FlareLane {
         }
     }
 
-    public static void setNotificationClickedHandler(com.flarelane.NotificationClickedHandler handler) {
+    public static void setNotificationClickedHandler(NotificationClickedHandler handler) {
         try {
             FlareLane.notificationClickedHandler = handler;
 
-            if (EventService.unhandledClickedNotification != null) {
-                handler.onClicked(EventService.unhandledClickedNotification);
-                EventService.unhandledClickedNotification = null;
+            if (EventService.unhandledNotificationClickEvent != null) {
+                handler.onClicked(EventService.unhandledNotificationClickEvent);
+                EventService.unhandledNotificationClickEvent = null;
             }
 
             Logger.verbose("NotificationClickedHandler has been registered.");
@@ -88,7 +85,7 @@ public class FlareLane {
         }
     }
 
-    public static void setNotificationForegroundReceivedHandler(com.flarelane.NotificationForegroundReceivedHandler notificationForegroundReceivedHandler) {
+    public static void setNotificationForegroundReceivedHandler(NotificationForegroundReceivedHandler notificationForegroundReceivedHandler) {
         try {
             FlareLane.notificationForegroundReceivedHandler = notificationForegroundReceivedHandler;
             Logger.verbose("NotificationForegroundReceivedHandler has been registered.");
@@ -280,7 +277,7 @@ public class FlareLane {
             if (projectId == null || projectId.trim().isEmpty()) return;
 
             // Execute only once.
-            if (!Helper.appInForeground(context) || isActivated) return;
+            if (!AndroidUtils.appInForeground(context) || isActivated) return;
             isActivated = true;
 
             String savedDeviceId = com.flarelane.BaseSharedPreferences.getDeviceId(context, true);
@@ -289,7 +286,7 @@ public class FlareLane {
                 com.flarelane.DeviceService.register(context, projectId, new DeviceService.ResponseHandler() {
                     @Override
                     public void onSuccess(Device device) {
-                        if (!FlareLane.isSubscribed(context) && com.flarelane.FlareLane.requestPermissionOnLaunch && Helper.appInForeground(context)) {
+                        if (!FlareLane.isSubscribed(context) && com.flarelane.FlareLane.requestPermissionOnLaunch && AndroidUtils.appInForeground(context)) {
                             com.flarelane.FlareLane.requestPermissionForNotifications(context, null);
                         }
                     }
@@ -299,7 +296,7 @@ public class FlareLane {
                 com.flarelane.DeviceService.activate(context, new DeviceService.ResponseHandler() {
                     @Override
                     public void onSuccess(Device device) {
-                        if (!FlareLane.isSubscribed(context) && com.flarelane.FlareLane.requestPermissionOnLaunch && Helper.appInForeground(context)) {
+                        if (!FlareLane.isSubscribed(context) && com.flarelane.FlareLane.requestPermissionOnLaunch && AndroidUtils.appInForeground(context)) {
                             com.flarelane.FlareLane.requestPermissionForNotifications(context, null);
                         }
                     }

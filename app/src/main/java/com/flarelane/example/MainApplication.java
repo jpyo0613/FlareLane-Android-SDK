@@ -3,11 +3,14 @@ package com.flarelane.example;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.flarelane.FlareLane;
-import com.flarelane.Notification;
-import com.flarelane.NotificationClickedHandler;
-import com.flarelane.NotificationForegroundReceivedHandler;
-import com.flarelane.NotificationReceivedEvent;
+import com.flarelane.notification.Notification;
+import com.flarelane.notification.NotificationClickedHandler;
+import com.flarelane.notification.NotificationForegroundReceivedHandler;
+import com.flarelane.notification.NotificationReceivedEvent;
+import com.flarelane.notification.NotificationClickedEvent;
 
 import org.json.JSONObject;
 
@@ -22,15 +25,15 @@ public class MainApplication extends Application {
         FlareLane.initWithContext(this, FLARELANE_PROJECT_ID, false);
         FlareLane.setNotificationClickedHandler(new NotificationClickedHandler() {
             @Override
-            public void onClicked(Notification notification) {
-                Log.d("FlareLane", "NotificationClickedHandler.onClicked: " + notification.toString());
+            public void onClicked(@NonNull NotificationClickedEvent event) {
+                Log.d("FlareLane", "NotificationClickedHandler.onClicked: " + event);
             }
         });
 
         FlareLane.setNotificationForegroundReceivedHandler((new NotificationForegroundReceivedHandler() {
             @Override
             public void onWillDisplay(NotificationReceivedEvent notificationReceivedEvent) {
-                Notification notification = notificationReceivedEvent.getNotification();
+                Notification notification = notificationReceivedEvent.notification;
                 Log.d("FlareLane", "NotificationForegroundReceivedHandler.onWillDisplay: " + notification.toString());
 
                 try {
