@@ -9,19 +9,15 @@ import org.json.JSONObject
 
 @Parcelize
 data class NotificationAction(
-    @JvmField val id: String,
+    @JvmField val type: NotificationActionType,
+    internal val id: String,
     @JvmField val url: String?,
     @JvmField val data: String?
 ) : Parcelable, InteractionClass {
-    constructor(jsonObject: JSONObject) : this(
-        jsonObject.getString("id"),
-        if (jsonObject.has("url")) jsonObject.getString("url") else null,
-        if (jsonObject.has("data")) jsonObject.getString("data") else null
-    )
-
     override fun toHashMap(): HashMap<String, Any?> {
         return hashMapOf<String, Any?>().also {
-            it["id"] = id
+            it["type"] = type.name
+            it["actionId"] = id
             it["url"] = url
             it["data"] = data
         }
@@ -29,9 +25,22 @@ data class NotificationAction(
 
     override fun toBundle(): Bundle {
         return Bundle().also {
-            it.putString("id", id)
+            it.putString("type", type.name)
+            it.putString("actionId", id)
             it.putString("url", url)
             it.putString("data", data)
         }
+    }
+
+    companion object {
+        internal fun create(
+            actionType: NotificationActionType,
+            jsonObject: JSONObject
+        ) = NotificationAction(
+            actionType,
+            jsonObject.getString("actionId"),
+            if (jsonObject.has("url")) jsonObject.getString("url") else null,
+            if (jsonObject.has("data")) jsonObject.getString("data") else null
+        )
     }
 }

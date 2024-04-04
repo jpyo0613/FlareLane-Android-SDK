@@ -38,10 +38,14 @@ internal class NotificationClickedActivity : Activity() {
 
             handleNotificationClicked(event)
 
-            if (notification.id == notificationAction.id) {
-                EventService.createNotificationClicked(projectId, deviceId, event)
-            } else {
-                EventService.createNotificationAction(projectId, deviceId, event)
+            when (event.action.type) {
+                NotificationActionType.CLICKED_BODY -> {
+                    EventService.createNotificationClicked(projectId, deviceId, event)
+                }
+
+                NotificationActionType.CLICKED_BUTTON -> {
+                    EventService.createNotificationAction(projectId, deviceId, event)
+                }
             }
             Logger.verbose("NotificationClickedActivity notification=$notification")
         } catch (e: Exception) {

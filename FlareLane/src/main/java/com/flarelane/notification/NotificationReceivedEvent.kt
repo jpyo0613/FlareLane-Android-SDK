@@ -35,11 +35,13 @@ class NotificationReceivedEvent(
                     clickedIntent.putParcelableDataClass(notification)
                     clickedIntent.putParcelableDataClass(
                         NotificationAction(
+                            NotificationActionType.CLICKED_BODY,
                             notification.id,
                             notification.url,
                             notification.data
                         )
                     )
+
                     val contentIntent = PendingIntent.getActivity(
                         context,
                         Random().nextInt(543254),
@@ -90,7 +92,10 @@ class NotificationReceivedEvent(
                                 actionIntent.putParcelableDataClass(notification)
 
                                 val buttonJsonObject = buttonsJsonArray.getJSONObject(i)
-                                val notificationAction = NotificationAction(buttonJsonObject)
+                                val notificationAction = NotificationAction.create(
+                                    NotificationActionType.CLICKED_BUTTON,
+                                    buttonJsonObject
+                                )
                                 actionIntent.putParcelableDataClass(notificationAction)
 
                                 val clickPendingIntent = PendingIntent.getActivity(

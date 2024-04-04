@@ -129,21 +129,21 @@ class MainActivity : AppCompatActivity() {
             val buttonsJsonArray = JSONArray()
             buttonsJsonArray.put(
                 JSONObject().also {
-                    it.put("id", "id1")
+                    it.put("actionId", "actionId1")
                     it.put("label", "FlareLane")
                     it.put("url", "https://www.flarelane.com/")
                 }
             )
             buttonsJsonArray.put(
                 JSONObject().also {
-                    it.put("id", "id2")
+                    it.put("actionId", "actionId2")
                     it.put("label", "Apple")
                     it.put("url", "https://www.apple.com")
                 }
             )
             buttonsJsonArray.put(
                 JSONObject().also {
-                    it.put("id", "id3")
+                    it.put("actionId", "actionId3")
                     it.put("label", "Oracle")
                     it.put("url", "https://www.oracle.com")
                 }
