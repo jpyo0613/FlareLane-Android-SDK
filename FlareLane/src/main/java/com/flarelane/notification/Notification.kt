@@ -62,6 +62,7 @@ data class Notification(
             it["url"] = url
             it["imageUrl"] = imageUrl
             it["data"] = data
+            it["buttons"] = buttons
         }
     }
 
@@ -73,6 +74,7 @@ data class Notification(
             it.putString("url", url)
             it.putString("imageUrl", imageUrl)
             it.putString("data", data)
+            it.putString("buttons", buttons)
         }
     }
 }
