@@ -46,7 +46,14 @@ public class NotificationReceivedEvent {
                 @Override
                 public void run() {
                     try {
-                        Intent clickedIntent = new Intent(context, NotificationClickedActivity.class)
+                        Class<?> clazz;
+                        if (ActivityLifecycleManager.isGoneBackground) {
+                            clazz = NotificationClickedActivityAppBringToFront.class;
+                        } else {
+                            clazz = NotificationClickedActivity.class;
+                        }
+                        clazz = NotificationClickedActivity.class;
+                        Intent clickedIntent = new Intent(context, clazz)
                                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         ExtensionsKt.putParcelableDataClass(clickedIntent, notification);
 
@@ -65,7 +72,7 @@ public class NotificationReceivedEvent {
                                 in = connection.getInputStream();
                                 image = BitmapFactory.decodeStream(in);
                             } catch (Exception e) {
-                                com.flarelane.BaseErrorHandler.handle(e);
+                                BaseErrorHandler.handle(e);
                             }
                         }
 
@@ -84,7 +91,7 @@ public class NotificationReceivedEvent {
                                 builder = builder.setColor(Color.parseColor(accentColor));
                             }
                         } catch (Exception e) {
-                            com.flarelane.BaseErrorHandler.handle(e);
+                            BaseErrorHandler.handle(e);
                         }
 
                         if (image != null) {
@@ -111,7 +118,7 @@ public class NotificationReceivedEvent {
                             EventService.createBackgroundReceived(projectId, deviceId, flarelaneNotification);
                         }
                     } catch (Exception e) {
-                        com.flarelane.BaseErrorHandler.handle(e);
+                        BaseErrorHandler.handle(e);
                     }
                 }
             }).start();

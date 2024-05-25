@@ -2,7 +2,8 @@ package com.flarelane;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
+import android.content.ComponentCallbacks2;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,9 +17,12 @@ import java.util.Set;
 class ActivityLifecycleManager {
     private final Set<Activity> activitySet = new HashSet<>();
     private final List<Class<?>> skipActivityList = Arrays.asList(
-        PermissionActivity.class,
-        NotificationClickedActivity.class
+            PermissionActivity.class,
+            NotificationClickedActivity.class,
+            NotificationClickedActivityAppBringToFront.class
     );
+
+    static volatile boolean isGoneBackground = false;
 
     private boolean isSkipActivity(Activity activity) {
         return skipActivityList.contains(activity.getClass());
@@ -34,6 +38,7 @@ class ActivityLifecycleManager {
             if (isSkipActivity(activity)) {
                 return;
             }
+            isGoneBackground = false;
             activitySet.add(activity);
             FlareLane.deviceRegisterOrActivate(activity.getApplicationContext());
         }
@@ -63,6 +68,23 @@ class ActivityLifecycleManager {
 
         @Override
         public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
+        }
+    };
+
+    protected ComponentCallbacks2 componentCallbacks = new ComponentCallbacks2() {
+        @Override
+        public void onTrimMemory(int level) {
+            if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+                isGoneBackground = true;
+            }
+        }
+
+        @Override
+        public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        }
+
+        @Override
+        public void onLowMemory() {
         }
     };
 }

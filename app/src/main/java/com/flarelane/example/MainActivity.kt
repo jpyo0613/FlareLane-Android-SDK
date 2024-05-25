@@ -13,6 +13,8 @@ import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.flarelane.FlareLane
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -21,9 +23,11 @@ import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     private val context: Context = this
+    private lateinit var splashScreen: SplashScreen
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
+        splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -121,10 +125,15 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("isFlareLane", true)
             intent.putExtra("title", "Click to open WebView")
             intent.putExtra("body", "url=${testUrl}")
-            intent.putExtra("url", testUrl)
+//            intent.putExtra("url", testUrl)
             intent.putExtra("data", "{}")
             intent.putExtra("from", "0")
             sendBroadcast(intent)
+
+            startActivity(Intent(this, SecondActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            })
+            finish()
         }
     }
 

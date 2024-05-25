@@ -55,6 +55,7 @@ public class FlareLane {
 
             Application application = (Application) context.getApplicationContext();
             application.registerActivityLifecycleCallbacks(activityLifecycleManager.mActivityLifecycleCallbacks);
+            application.registerComponentCallbacks(activityLifecycleManager.componentCallbacks);
         } catch (Exception e) {
             com.flarelane.BaseErrorHandler.handle(e);
         }
